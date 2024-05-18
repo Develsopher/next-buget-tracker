@@ -8,6 +8,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import RootProvider from "@/components/providers/RootProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,8 +23,16 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>{children}</body>
+      <html
+        lang="en"
+        className="dark"
+        style={{
+          colorScheme: "dark",
+        }}
+      >
+        <body className={inter.className}>
+          <RootProvider>{children}</RootProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
