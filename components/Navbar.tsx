@@ -22,7 +22,7 @@ const Navbar = () => {
 const items = [
   { label: "홈", link: "/" },
   { label: "수입/지출 내역", link: "/transactions" },
-  { label: "관리", link: "/manage" },
+  { label: "설정", link: "/manage" },
 ];
 
 function MobileNavbar() {
