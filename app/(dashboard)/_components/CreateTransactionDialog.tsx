@@ -13,7 +13,7 @@ import {
   CreateTransactionSchema,
   CreateTransactionSchemaType,
 } from "@/schema/transaction";
-import { ReactNode } from "react";
+import { ReactNode, useCallback } from "react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +26,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import CategoryPicker from "./CategoryPicker";
 
 interface Props {
   trigger: ReactNode;
@@ -42,6 +43,14 @@ const CreateTransactionDialog = ({ trigger, type }: Props) => {
       date: new Date(),
     },
   });
+
+  const handleCategoryChange = useCallback(
+    (value: string) => {
+      form.setValue("category", value);
+    },
+    [form],
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
@@ -97,8 +106,14 @@ const CreateTransactionDialog = ({ trigger, type }: Props) => {
                   <FormItem>
                     <FormLabel>카테고리</FormLabel>
                     <FormControl>
-                      <Input defaultValue={0} type="number" {...field} />
+                      <CategoryPicker
+                        type={type}
+                        onChange={handleCategoryChange}
+                      />
                     </FormControl>
+                    <FormDescription>
+                      해당하는 카테고리를 선택해 주세요.
+                    </FormDescription>
                   </FormItem>
                 )}
               />
