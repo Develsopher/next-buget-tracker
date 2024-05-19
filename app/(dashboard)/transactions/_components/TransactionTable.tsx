@@ -15,7 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { DownloadIcon } from "lucide-react";
+import { DownloadIcon, MoreHorizontal, TrashIcon } from "lucide-react";
 import SkeletonWrapper from "@/components/SkeletonWrapper";
 import {
   Table,
@@ -29,6 +29,17 @@ import { DataTableColumnHeader } from "@/components/datatable/ColumnHeader";
 import { cn } from "@/lib/utils";
 import { DataTableFacetedFilter } from "@/components/datatable/FacedFilters";
 import { DataTableViewOptions } from "@/components/datatable/ColumnToggle";
+
+import { download, generateCsv, mkConfig } from "export-to-csv";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import DeleteTransactionDialog from "./DeleteTransactionDialog";
 
 interface Props {
   from: Date;
@@ -110,12 +121,18 @@ const columns: ColumnDef<TransactionHistoryRow>[] = [
       </p>
     ),
   },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => <RowActions transaction={row.original} />,
-  // },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => <RowActions transaction={row.original} />,
+  },
 ];
+
+const csvConfig = mkConfig({
+  fieldSeparator: ",",
+  decimalSeparator: ".",
+  useKeysAsHeaders: true,
+});
 
 const TransactionTable = ({ from, to }: Props) => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -130,6 +147,11 @@ const TransactionTable = ({ from, to }: Props) => {
         )}&to=${DateToUTCDate(to)}`,
       ).then((res) => res.json()),
   });
+
+  const handleExportCSV = (data: any[]) => {
+    const csv = generateCsv(csvConfig)(data);
+    download(csvConfig)(csv);
+  };
 
   const table = useReactTable({
     data: history.data || emptyData,
@@ -187,6 +209,26 @@ const TransactionTable = ({ from, to }: Props) => {
           )}
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button
+            variant={"outline"}
+            size={"sm"}
+            className="ml-auto h-8 lg:flex"
+            onClick={() => {
+              const data = table.getFilteredRowModel().rows.map((row) => ({
+                카테고리: row.original.category,
+                카테고리아이콘: row.original.categoryIcon,
+                내용: row.original.description,
+                종류: row.original.type,
+                금액: row.original.amount,
+                화폐단위적용금액: row.original.formattedAmount,
+                날짜: row.original.date,
+              }));
+              handleExportCSV(data);
+            }}
+          >
+            <DownloadIcon className="mr-2 h-4 w-4" />
+            CSV파일 추출
+          </Button>
           <DataTableViewOptions table={table} />
         </div>
       </div>
@@ -265,3 +307,38 @@ const TransactionTable = ({ from, to }: Props) => {
 };
 
 export default TransactionTable;
+
+function RowActions({ transaction }: { transaction: TransactionHistoryRow }) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  return (
+    <>
+      <DeleteTransactionDialog
+        open={showDeleteDialog}
+        setOpen={setShowDeleteDialog}
+        transactionId={transaction.id}
+      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant={"ghost"} className="h-8 w-8 p-0 ">
+            <span className="sr-only">메뉴 열기</span>
+            <MoreHorizontal className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>액션</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onSelect={() => {
+              setShowDeleteDialog((prev) => !prev);
+            }}
+          >
+            <TrashIcon className="size-4 text-muted-foreground" />
+            삭제
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { DeleteCategory } from "@/app/(dashboard)/_actions/categories";
+import { DeleteTransaction } from "@/app/(dashboard)/transactions/_actions/deleteTransaction";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,61 +10,54 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { TransactionType } from "@/lib/types";
-import { Category } from "@prisma/client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import React, { ReactNode } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import React from "react";
 import { toast } from "sonner";
 
 interface Props {
-  trigger: ReactNode;
-  category: Category;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  transactionId: string;
 }
 
-function DeleteCategoryDialog({ category, trigger }: Props) {
-  const categoryIdentifier = `${category.name}-${category.type}`;
+function DeleteTransactionDialog({ open, setOpen, transactionId }: Props) {
   const queryClient = useQueryClient();
 
   const deleteMutation = useMutation({
-    mutationFn: DeleteCategory,
+    mutationFn: DeleteTransaction,
     onSuccess: async () => {
-      toast.success("카테고리가 성공적으로 제거되었습니다.", {
-        id: categoryIdentifier,
+      toast.success("내역을 성공적으로 삭제하였습니다!", {
+        id: transactionId,
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["categories"],
+        queryKey: ["transactions"],
       });
     },
     onError: () => {
       toast.error("Something went wrong", {
-        id: categoryIdentifier,
+        id: transactionId,
       });
     },
   });
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>😭 한번 더 확인해주세요!</AlertDialogTitle>
           <AlertDialogDescription>
-            해당 카테고리는 삭제하면 되돌릴 수 없어요.
+            해당 내역을 삭제하면 되돌릴 수 없어요.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>취소하기</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              toast.loading("카테고리 지우는중...", {
-                id: categoryIdentifier,
+              toast.loading("내역 지우는중...", {
+                id: transactionId,
               });
-              deleteMutation.mutate({
-                name: category.name,
-                type: category.type as TransactionType,
-              });
+              deleteMutation.mutate(transactionId);
             }}
           >
             계속하기
@@ -75,4 +68,4 @@ function DeleteCategoryDialog({ category, trigger }: Props) {
   );
 }
 
-export default DeleteCategoryDialog;
+export default DeleteTransactionDialog;
