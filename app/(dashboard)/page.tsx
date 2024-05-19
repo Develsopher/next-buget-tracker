@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import CreateTransactionDialog from "./_components/CreateTransactionDialog";
 import Overview from "./_components/Overview";
+import History from "./_components/History";
 
 const page = async () => {
   const user = await currentUser();
@@ -22,7 +23,7 @@ const page = async () => {
     redirect("/wizard");
   }
   return (
-    <div className="h-full bg-background">
+    <div className="h-full bg-background ">
       <div className="border-b bg-card">
         <div className="container flex flex-wrap items-center justify-between gap-6 py-8">
           <p className="text-3xl font-bold">
@@ -53,6 +54,7 @@ const page = async () => {
             />
           </div>
           <Overview userSettings={userSettings} />
+          <History userSettings={userSettings} />
         </div>
       </div>
     </div>
