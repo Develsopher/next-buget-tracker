@@ -1,6 +1,5 @@
 "use client";
 import { GetTransactionHistoryResponseType } from "@/app/api/transactions-history/route";
-import { DateToUTCDate } from "@/lib/helpers";
 import { useQuery } from "@tanstack/react-query";
 import React, { useMemo, useState } from "react";
 import {
@@ -141,11 +140,9 @@ const TransactionTable = ({ from, to }: Props) => {
   const history = useQuery<GetTransactionHistoryResponseType>({
     queryKey: ["transactions", "history", from, to],
     queryFn: () =>
-      fetch(
-        `/api/transactions-history?from=${DateToUTCDate(
-          from,
-        )}&to=${DateToUTCDate(to)}`,
-      ).then((res) => res.json()),
+      fetch(`/api/transactions-history?from=${from}&to=${to}`).then((res) =>
+        res.json(),
+      ),
   });
 
   const handleExportCSV = (data: any[]) => {
