@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 프로젝트 소개
+💰Buget Tracker with Next.js💰
 
-## Getting Started
+- 개인별 수입 또는 지출내역을 기록하고 자산의 흐름을 파악할 수 있는 웹 어플리케이션 입니다.
 
-First, run the development server:
+# 👨‍🔧 Stack
+- Client: Next(app router), Typescript, Tanstack Query, zod, react-hook-form, Tailwind CSS
+- Database: Prisma, Postgre SQL(with Vercel)
+- Auth: Clerk(nextjs)
+- UI: Shadcn UI, Recharts, emoji-mart, toast(sooner), count animation
+- Deploy: Vercel
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+# 🧑‍💻 Database Schema
+![스키마구성](https://develsopher-nextjs.s3.ap-northeast-2.amazonaws.com/budget-tracker-data-schema.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 기능 소개
+- 로그인 및 유저관리는 [Clerk](https://clerk.com/)솔루션을 사용하고 있습니다.
+- 유저가 로그인(회원가입)하게 되면 사용할 `Currency`를 설정해야 합니다.
+  - 화폐설정은 원, 달러, 엔화가 가능합니다.
+  - 유저가 화폐설정이 되어있지 않으면 자동으로 `wizard`페이지로 리다이렉트시켜 유저의 기본세팅을 유도합니다.
+  ![image](https://github.com/Develsopher/next-buget-tracker/assets/78126381/fd7a919f-3836-43c6-bcaa-7d176ce3e6f6)
+## 수입 및 지출등록 프로세스
+![image](https://github.com/Develsopher/next-buget-tracker/assets/78126381/87f96e2b-8165-4cc0-9eaa-24b1a047b456)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
